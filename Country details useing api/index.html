@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Country Information</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .container {
+        margin-top: 30px;
+      }
+      .country-info {
+        margin-top: 20px;
+      }
+      .country-info img {
+        max-width: 100%;
+        height: auto;
+        margin-top: 10px;
+      }
+      .coat-of-arms {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+      }
+      
+      .coat-of-arms img {
+        max-width: 100%;
+        height: 200px; /* Set a specific height for Coat of Arms */
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center">Country Information</h1>
+      <div class="form-group">
+        <label for="countryInput">Enter Country:</label>
+        <br />
+        <div
+          class="form-control d-flex flex-column flex-md-row justify-content-around btn-group"
+        >
+          <input
+            type="text"
+            class="form-control mb-2 mb-md-0"
+            id="countryInput"
+            placeholder="Enter country name"
+          />
+          <button
+            class="btn btn-primary mt-2 mt-md-0"
+            onclick="getCountryInfo()"
+          >
+            Get Information
+          </button>
+        </div>
+      </div>
+
+      <div id="countryInfo" class="country-info container"></div>
+    </div>
+
+    <script>
+      function getCountryInfo() {
+        const countryInput = document.getElementById("countryInput").value;
+        const countryInfoDiv = document.getElementById("countryInfo");
+
+        // Clear previous content
+        countryInfoDiv.innerHTML = "";
+
+        // Fetch country information from the API
+        fetch(`https://restcountries.com/v3.1/name/${countryInput}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === 404) {
+              countryInfoDiv.innerHTML =
+                '<p class="text-danger">Country not found</p>';
+            } else {
+              const country = data[0];
+
+              const currencyDetails = Object.entries(country.currencies)
+                .map(([code, currency]) => {
+                  return `<div>${currency.name} (${code}) - Symbol: ${currency.symbol}</div>`;
+                })
+                .join("");
+
+              const borderingCountries = country.borders.map((borderCode) => {
+                const borderingCountry = data.find(
+                  (c) => c.cca3 === borderCode
+                );
+                return borderingCountry
+                  ? borderingCountry.name.common
+                  : borderCode;
+              });
+
+              const borderingCountriesList = borderingCountries
+                .map((country) => `<span>${country}</span>`)
+                .join(", ");
+
+              const timezones = country.timezones.join(", ");
+
+              const countryInfo = `
+          <div class="text-center">
+            <h2>${country.name.common}</h2>
+          </div>
+          <div class="row">
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Capital</strong>
+                <br>
+                 ${country.capital.join(", ")}</div>
+            <div class="col-12 col-md-6 text-center d-block p-2  "><strong>Area</strong><br> ${
+              country.area
+            } square kilometers</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Population</strong><br> ${
+              country.population
+            }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Region</strong><br> ${
+              country.region
+            }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Subregion</strong> <br>${
+              country.subregion
+            }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Continent(s)</strong><br> ${country.continents.join(
+              ", "
+            )}</div>
+            <div class="col-12 col-md-6 text-center p-2 "><strong>Languages</strong> 
+                <br>${Object.values(country.languages).join(", ")}
+            </div>
+            <div class="col-12 col-md-6 text-center p-2 "><strong>Currencies</strong>   
+                <div>${currencyDetails}</div>
+            </div>
+            <div class="col-12 col-md-6 text-center d-block justify-content-between p-2 "><strong>Bordering Countries</strong><br>
+                
+                ${borderingCountriesList}
+                
+                </div>
+                <!-- Additional Information -->
+                <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Country Code (cca2)</strong> <br>${
+                  country.cca2
+                }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Country Code (cca3)</strong> <br>${
+              country.cca3
+            }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Numeric Country Code (ccn3)</strong> <br>${
+              country.ccn3
+            }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>IOC Code</strong> <br>${
+              country.cioc
+            }</div>
+            
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Region</strong> <br>${
+              country.region
+            }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Subregion</strong> <br>${
+              country.subregion
+            }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Start of Week</strong> <br>${
+              country.startOfWeek || "Not available"
+            }</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Timezones</strong><br> ${timezones}</div>
+            <div class="col-12 col-md-6 text-center d-block p-2 "><strong>Google Maps Location</strong><br> <a href="${
+              country.maps.googleMaps
+            }" target="_blank">View on Google Maps</a></div>
+            <div class="container">
+                <div class="row">
+
+              <div class="col-12 col-md-6 coat-of-arms "><strong>Coat of Arms</strong> 
+                <br>
+                ${
+                  country.coatOfArms
+                    ? `<img src="${country.coatOfArms.svg}" alt="Coat of Arms" class="img-thumbnail">`
+                    : "Not available"
+                }</div>
+              <div class="col-12 col-md-6 coat-of-arms "><strong>Flag</strong> 
+                <br>
+                  <img src="${
+                    country.flags.png
+                  }"  alt="Flag" class="img-fluid img-thumbnail">
+              </div>
+              </div 
+            </div>
+            <!-- Add more details as needed -->
+            </div>
+            `;
+              countryInfoDiv.innerHTML = countryInfo;
+              console.log(data);
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching country information:", error);
+          });
+      }
+    </script>
+  </body>
+</html>

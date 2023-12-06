@@ -1,0 +1,1 @@
+website to create an api for the chat bot : https://developers.generativeai.google/tutorials/text_quickstart?authuser=2

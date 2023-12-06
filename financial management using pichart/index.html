@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker with Dynamic Pie Chart</title>
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+
+      .container {
+        margin-top: 50px;
+      }
+
+      canvas {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="my-4">Expense Tracker with Dynamic Pie Chart</h1>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <div class="form-group">
+                <label for="addAmount">Add Amount:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="addAmount"
+                  required
+                />
+              </div>
+
+              <button type="button" class="btn btn-primary" id="addAmountBtn">
+                Add Amount
+              </button>
+              <br /><br />
+              <h5 class="card-title">Add Expense</h5>
+              <form id="expenseForm">
+                <div class="form-group">
+                  <label for="expenseCategory">Expense Category:</label>
+                  <select class="form-control" id="expenseCategory" required>
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <!-- Add more categories as needed -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="expenseAmount">Expense Amount:</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="expenseAmount"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  Add Expense
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Budget</h5>
+              <p id="budgetAmount">Set your budget</p>
+            </div>
+          </div>
+          <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Expense List</h5>
+              <ul id="expenseList" class="list-group">
+                
+              </ul>
+            </div>
+          </div>
+          <div class="card mt-3">
+            <div class="card-body">
+              <h5 class="card-title">Expense Chart</h5>
+              <canvas id="expenseChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const expenseForm = document.getElementById('expenseForm');
+        const budgetAmountElement = document.getElementById('budgetAmount');
+        const expenseList = document.getElementById('expenseList');
+        const expenseChartCanvas = document.getElementById('expenseChart');
+        const addAmountBtn = document.getElementById('addAmountBtn');
+
+        let totalBudget = 0;
+        let totalExpenses = 0;
+        let addedAmount = 0;
+        let expenseChart; 
+        const expensesData = {};
+
+        
+        addAmountBtn.addEventListener('click', function () {
+            addedAmount = parseFloat(document.getElementById('addAmount').value) || 0;
+
+            if (!isNaN(addedAmount)) {
+                
+                totalBudget += addedAmount;
+
+                
+                budgetAmountElement.textContent = `Budget: $${totalBudget.toFixed(2)}`;
+
+                
+                updateExpenseChart(totalExpenses);
+
+                
+                document.getElementById('addAmount').value = '';
+            }
+        });
+
+        expenseForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const expenseCategory = document.getElementById('expenseCategory').value;
+            const expenseAmount = parseFloat(document.getElementById('expenseAmount').value);
+
+            if (!isNaN(expenseAmount)) {
+                
+                if (expenseAmount <= totalBudget) {
+                
+                    expensesData[expenseCategory] = (expensesData[expenseCategory] || 0) + expenseAmount;
+
+                
+                    totalExpenses += expenseAmount;
+                    totalBudget -= expenseAmount;
+
+                
+                    budgetAmountElement.textContent = `Budget: $${Math.max(totalBudget, 0).toFixed(2)}`;
+
+                
+                    updateExpenseList();
+
+                
+                    updateExpenseChart(totalExpenses);
+
+                
+                    expenseForm.reset();
+                } else {
+                    alert("Expense exceeds the remaining budget!");
+                }
+            }
+        });
+
+        
+        function updateExpenseList() {
+        
+            expenseList.innerHTML = "";
+
+        
+            for (const category in expensesData) {
+                const expenseItem = document.createElement('li');
+                expenseItem.className = 'list-group-item';
+                expenseItem.innerHTML = `${category}: $${expensesData[category].toFixed(2)}`;
+                expenseList.appendChild(expenseItem);
+            }
+        }
+
+        
+        function updateExpenseChart(currentExpenses) {
+        
+            if (expenseChart) {
+                expenseChart.destroy();
+            }
+
+            const ctx = expenseChartCanvas.getContext('2d');
+            expenseChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Expenses', 'Remaining Budget'],
+                    datasets: [{
+                        data: [currentExpenses, totalBudget],
+                        backgroundColor: ['#dc3545', '#007bff'],
+                    }],
+                },
+            });
+        }
+    });
+    </script>
+  </body>
+</html>

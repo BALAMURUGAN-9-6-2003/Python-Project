@@ -1,0 +1,53 @@
+The provided Python program is a simple graphical user interface (GUI) application for converting PDF files into audio using text-to-speech technology. Here's an abstract for a single page with simple English:
+
+
+Abstract: PDF to Audio Converter GUI
+
+This Python program offers a user-friendly interface for converting PDF files into audio format. The graphical interface allows users to choose a PDF file, select a voice (male or female), and then either play the audio or save it as an MP3 file.
+
+The program utilizes the `PyPDF2` library to extract text from each page of the PDF and `pyttsx3` for text-to-speech conversion. Users can customize the voice settings, including the choice between male and female voices.
+
+Key Features:
+- Choose a PDF file using a file dialog.
+- Select a voice preference (male or female).
+- Play the audio directly or save it as an MP3 file.
+- Option to specify the desired file name for the saved audio.
+
+The GUI is designed with simplicity in mind, featuring buttons for file selection, voice options, and actions like playing or saving the audio. Error handling is incorporated to provide informative messages in case of any issues.
+
+This program serves as a convenient tool for users who prefer audio content or have accessibility needs, offering a straightforward way to convert PDF documents into spoken words.
+
+
+System Requirements:
+
+1.Operating System:
+   - Any operating system that supports Python. (e.g., Windows, macOS, Linux)
+
+2.Python:
+   - Python 3.x installed on the system.
+     - Download Python from [python.org](https://www.python.org/downloads/).
+     - Follow installation instructions for your operating system.
+
+3.Python Libraries:
+   - The following Python libraries need to be installed. You can install them using the provided `pip` commands:
+     - pyttsx3: A text-to-speech conversion library.
+       
+       pip install pyttsx3
+       
+     - PyPDF2: A library for reading PDF files and extracting text.
+       
+       pip install PyPDF2
+       
+
+4.Audio Playback:
+   - A system with audio playback capability is required to hear the converted audio.
+   - Ensure that the system's audio settings are configured properly.
+
+5.Graphical User Interface (GUI):
+   - The program uses the Tkinter library for the graphical user interface.
+   - Tkinter is included with most Python installations, so no additional installation is usually required.
+
+6.Hardware Requirements:
+   - The hardware requirements are minimal, and the program should run on standard desktop or laptop configurations.
+
+Ensure that the system meets these requirements to run the PDF to Audio Converter GUI successfully. If any libraries are missing, you can use the provided `pip` commands to install them.
